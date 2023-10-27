@@ -1,5 +1,7 @@
 package no.jlwcrews.jpademo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +31,7 @@ public class Customer {
     private String customerEmail;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("customer")
     @JoinColumn(name = "customer_id")
     private List<Order> orders = new ArrayList<>();
 

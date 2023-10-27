@@ -6,6 +6,7 @@ import no.jlwcrews.jpademo.model.Item;
 import no.jlwcrews.jpademo.model.NewOrderDTO;
 import no.jlwcrews.jpademo.model.Order;
 import no.jlwcrews.jpademo.service.CustomerService;
+import no.jlwcrews.jpademo.service.OrderService;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,8 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(
+            CustomerService customerService) {
         this.customerService = customerService;
     }
 
@@ -44,6 +46,7 @@ public class CustomerController {
 
         Customer customer = customerService.getCustomerById(id);
         Order order = new Order();
+
         for (Item item : newOrderDTO.getItems()) {
             order.getItems().add(new Item(item.getItemName(), item.getItemQuantity()));
         }
