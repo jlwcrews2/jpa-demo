@@ -6,13 +6,10 @@ import no.jlwcrews.jpademo.model.Item;
 import no.jlwcrews.jpademo.model.NewOrderDTO;
 import no.jlwcrews.jpademo.model.Order;
 import no.jlwcrews.jpademo.service.CustomerService;
-import no.jlwcrews.jpademo.service.OrderService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/customer")
