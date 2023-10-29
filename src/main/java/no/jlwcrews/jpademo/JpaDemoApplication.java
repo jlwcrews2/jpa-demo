@@ -1,7 +1,9 @@
 package no.jlwcrews.jpademo;
 
+import no.jlwcrews.jpademo.model.Address;
 import no.jlwcrews.jpademo.model.Customer;
 import no.jlwcrews.jpademo.model.Order;
+import no.jlwcrews.jpademo.repository.AddressRepository;
 import no.jlwcrews.jpademo.repository.CustomerRepository;
 import no.jlwcrews.jpademo.repository.OrderRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -17,9 +19,14 @@ public class JpaDemoApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(CustomerRepository customerRepository) {
+    CommandLineRunner commandLineRunner(
+            CustomerRepository customerRepository,
+            AddressRepository addressRepository) {
         return args -> {
-            customerRepository.save(new Customer("Joe Bob Briggs", "joe@joebob.com"));
+            Customer c = customerRepository.save(new Customer("Joe Bob Briggs", "joe@joebob.com"));
+            Address a = addressRepository.save(new Address("1234 Place Street, #3"));
+            c.getAddresses().add(a);
+            customerRepository.save(c);
         };
     }
 
