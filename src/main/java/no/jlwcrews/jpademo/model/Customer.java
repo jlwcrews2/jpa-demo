@@ -1,6 +1,5 @@
 package no.jlwcrews.jpademo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,6 +33,14 @@ public class Customer {
     @JsonIgnoreProperties("customer")
     @JoinColumn(name = "customer_id")
     private List<Order> orders = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "customer_address",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    private List<Address> addresses = new ArrayList<>();
 
     public Customer(String customerName, String customerEmail) {
         this.customerName = customerName;

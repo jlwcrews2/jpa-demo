@@ -1,15 +1,19 @@
 package no.jlwcrews.jpademo;
 
+import no.jlwcrews.jpademo.model.Address;
 import no.jlwcrews.jpademo.model.Customer;
 import no.jlwcrews.jpademo.model.Item;
 import no.jlwcrews.jpademo.model.Order;
+import no.jlwcrews.jpademo.repository.AddressRepository;
 import no.jlwcrews.jpademo.repository.CustomerRepository;
-import org.aspectj.weaver.ast.Or;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class JpaDemoApplicationTests {
 
     private Order getOrders() {
@@ -23,8 +27,12 @@ class JpaDemoApplicationTests {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Autowired
+    AddressRepository addressRepository;
+
     @Test
-    void initCustomerEntity() {
+    @org.junit.jupiter.api.Order(1)
+    void testCustomerOrdersAndItems() {
 
         Customer customer = new Customer("Joe Bob Briggs", "joe@thedrivein.com");
 
@@ -48,4 +56,40 @@ class JpaDemoApplicationTests {
 
     }
 
+    @Test
+    @org.junit.jupiter.api.Order(2)
+    void testAddresses() {
+        Address shippingAddress = new Address("123 Street Place");
+        Address billingAddress = new Address("999 Uptown Blvd");
+        Address a1 = addressRepository.save(shippingAddress);
+        Address a2 = addressRepository.save(billingAddress);
+
+        assert a1.getAddress().contains("123 Street Place");
+        assert a2.getAddress().contains("999 Uptown Blvd");
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(3)
+    void testAddingAddressesToCustomers() {
+        Customer joeBob = customerRepository.findById(1L).orElse(null);
+        Address shippingAddress = addressRepository.findById(1L).orElse(null);
+        Address billingAddress = addressRepository.findById(2L).orElse(null);
+        joeBob.getAddresses().add(shippingAddress);
+        joeBob.getAddresses().add(billingAddress);
+        Customer c1 = customerRepository.save(joeBob);
+        assert c1.getAddresses().size() == 2;
+        assert c1.getAddresses().get(0).getAddress().equals("123 Street Place");
+
+        Customer jimbob = customerRepository.save(new Customer("Jim Bob Luke", "jim@bob.com"));
+
+        jimbob.getAddresses().add(shippingAddress);
+        customerRepository.save(jimbob);
+
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(4)
+    void addressThing() {
+        addressRepository.findById(1L).ifPresent(address -> address.getCustomers().forEach(customer -> System.out.println(customer.getCustomerName())));
+    }
 }
