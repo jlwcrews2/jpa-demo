@@ -34,7 +34,7 @@ public class Customer {
     @JoinColumn(name = "customer_id")
     private List<Order> orders = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "customer_address",
             joinColumns = @JoinColumn(name = "customer_id"),

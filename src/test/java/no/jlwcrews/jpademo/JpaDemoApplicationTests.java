@@ -1,5 +1,6 @@
 package no.jlwcrews.jpademo;
 
+import com.github.javafaker.Faker;
 import no.jlwcrews.jpademo.model.Address;
 import no.jlwcrews.jpademo.model.Customer;
 import no.jlwcrews.jpademo.model.Item;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -23,6 +25,8 @@ class JpaDemoApplicationTests {
     private Item getItem(String name, Integer qty) {
         return new Item(name, qty);
     }
+
+    private Faker faker = new Faker();
 
     @Autowired
     CustomerRepository customerRepository;
@@ -69,25 +73,23 @@ class JpaDemoApplicationTests {
     }
 
     @Test
+    @Transactional
     @org.junit.jupiter.api.Order(3)
     void testAddingAddressesToCustomers() {
-        Customer joeBob = customerRepository.findById(1L).orElse(null);
+        Customer joeBob = customerRepository.save(new Customer(faker.name().fullName(), faker.internet().emailAddress()));
         Address shippingAddress = addressRepository.findById(1L).orElse(null);
         Address billingAddress = addressRepository.findById(2L).orElse(null);
         joeBob.getAddresses().add(shippingAddress);
         joeBob.getAddresses().add(billingAddress);
         Customer c1 = customerRepository.save(joeBob);
+        for (Address address: c1.getAddresses()) {
+            System.out.println(address.getAddress());
+        }
         assert c1.getAddresses().size() == 2;
-        assert c1.getAddresses().get(0).getAddress().equals("123 Street Place");
-
-        Customer jimbob = customerRepository.save(new Customer("Jim Bob Luke", "jim@bob.com"));
-
-        jimbob.getAddresses().add(shippingAddress);
-        customerRepository.save(jimbob);
-
     }
 
     @Test
+    @Transactional
     @org.junit.jupiter.api.Order(4)
     void addressThing() {
         addressRepository.findById(1L).ifPresent(address -> address.getCustomers().forEach(customer -> System.out.println(customer.getCustomerName())));

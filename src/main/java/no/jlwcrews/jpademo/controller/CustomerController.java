@@ -7,6 +7,7 @@ import no.jlwcrews.jpademo.model.NewOrderDTO;
 import no.jlwcrews.jpademo.model.Order;
 import no.jlwcrews.jpademo.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,11 @@ public class CustomerController {
     @GetMapping
     public List<Customer> getCustomers() {
         return customerService.getCustomers();
+    }
+
+    @GetMapping("/page/{pageNumber}")
+    public List<Customer> getCustomersByPage(@PathVariable int pageNumber) {
+        return customerService.getCustomersPageable(pageNumber);
     }
 
     @GetMapping("/{id}")

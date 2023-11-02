@@ -29,7 +29,7 @@ public class Address {
 
     private String address;
 
-    @ManyToMany(mappedBy = "addresses", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "addresses", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Customer> customers = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package no.jlwcrews.jpademo;
 
+import com.github.javafaker.Faker;
 import no.jlwcrews.jpademo.model.Address;
 import no.jlwcrews.jpademo.model.Customer;
 import no.jlwcrews.jpademo.repository.AddressRepository;
@@ -20,12 +21,15 @@ public class JpaDemoApplication {
     CommandLineRunner commandLineRunner(
             CustomerRepository customerRepository,
             AddressRepository addressRepository) {
+
+        Faker faker = new Faker();
         return args -> {
-            Customer c = customerRepository.save(new Customer("Joe Bob Briggs", "joe@joebob.com"));
-            Address a = addressRepository.save(new Address("1234 Place Street, #3"));
-            c.getAddresses().add(a);
-            customerRepository.save(c);
+            for (int i = 0; i < 100; i++) {
+                Customer c = customerRepository.save(new Customer(faker.name().fullName(), faker.internet().emailAddress()));
+                Address a = addressRepository.save(new Address(faker.address().fullAddress()));
+                c.getAddresses().add(a);
+                customerRepository.save(c);
+            }
         };
     }
-
 }
